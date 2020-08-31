@@ -21,6 +21,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::post('login', 'API\UserController@login')->name('login');
 Route::post('signup', 'API\UserController@register')->name('signup');
+Route::post('userprofile', 'API\UserController@userprofile')->name('userprofile');
 Route::post('/changepassword','ResetPasswordController@changepassword');
 Route::post('sendotp', 'API\UserController@sendotp')->name('sendotp');
 Route::post('forgetotp', 'ResetPasswordController@forgetotp')->name('forgetotp');
@@ -52,3 +53,12 @@ Route::post('/sendNotification','NewGameController@sendNotification')->name('sen
 Route::post('/turnamentuserlist','TurnamentController@turnamentuserlist')->name('turnamentuserlist');
 Route::get('/turnamentcirclelist','TurnamentController@turnamentcirclelist')->name('turnamentcirclelist');
 Route::post('/createturnament','TurnamentController@createturnament')->name('createturnament');
+
+
+
+
+
+
+
+
+
