@@ -19,7 +19,7 @@ class ChallengeController extends Controller
      {
        try
      {
-       $challenge_data=TableTenniscreateCircle::select('id','user_id','circle_name')->get();
+       $challenge_data=TableTenniscreateCircle::get();
        return response()->json(['status'=>'1','data' => $challenge_data], $this-> successStatus); 
      }
      catch (\Exception $e) {
@@ -40,6 +40,7 @@ class ChallengeController extends Controller
      }
    public function challengerequest(Request $request)
    {
+   try{
      $circle_id=$request->circle_id;
      $user_id=$request->user_id;
      $challenge_data=new challenge();
@@ -53,9 +54,15 @@ class ChallengeController extends Controller
       {
          return response()->json(['result'=>'Something wrong','status'=>'0'], 401);
       }
+     }
+  catch (\Exception $e) {
+      return $this->respondWithError(500,"Internal Server Error!",array());
+    }
+
    }
   public function challengeaccept(Request $request)
   {
+ try{
     $user_id=$request->user_id;
     $circle_id=$request->circle_id;
     $accept_user_id=$request->accept_user_id;
@@ -88,7 +95,11 @@ class ChallengeController extends Controller
    }
   }
  }
-   
+   }
+ catch (\Exception $e) {
+      return $this->respondWithError(500,"Internal Server Error!",array());
+    }
+
    }
 
 }

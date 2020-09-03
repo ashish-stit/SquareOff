@@ -18,7 +18,7 @@ public $successStatus = 200;
        try
      {
        $user_id=$request->user_id;
-       $list_data = DB::select('select name from users where id !='.$user_id);
+       $list_data = DB::select('select id,name from users where id !='.$user_id);
        return response()->json(['status'=>'1','data' => $list_data], $this-> successStatus); 
      }
      catch (\Exception $e) {
@@ -45,6 +45,7 @@ public $successStatus = 200;
      }
        public function confirm(Request $request)
         {
+  try{
          $from_user_id=$request->from_user_id;
          $user_id=$request->user_id;
          $response=$request->response;
@@ -77,6 +78,11 @@ public $successStatus = 200;
           }
          
          }
+     }
+   catch (\Exception $e) {
+        return $this->respondWithError(500,"Internal Server Error!",array());
+    }
+
          }
         public function sendNotification($fcm_token, $id="3")
        {  

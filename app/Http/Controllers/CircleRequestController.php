@@ -5,13 +5,19 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\joincircle;
 use App\User;
+use App\TableTenniscreateCircle;
 
 class CircleRequestController extends Controller
 {
    public $successStatus = 200;
+    private function respondWithError($code, $message, $data)
+  {
+    return response()->json(array('code'=>$code,'message'=>$message,'data'=>$data));
+  }
 
     public function circlerequest(Request $request)
      {
+     try{
        $user_id=$request->user_id;
       $user_data=User::where('id',$user_id)->first();
      if($user_data == "")
@@ -21,12 +27,16 @@ class CircleRequestController extends Controller
       else{
        $circle_id=$request->circle_id;
        $circle_request=$request->circle_request;
+       $circle_response=$request->circle_response;
+      $for_response_data=TableTenniscreateCircle::where('id',$circle_id)->first();
        $response_data=joincircle::where('user_id',$user_id)->first();
          $circle_data=new joincircle();
          $circle_data->user_id=$user_id;
          $circle_data->circle_id=$circle_id;
          $circle_data->circle_request=$circle_request;
          $circle_data->user_name=$user_data->name;
+         $for_response_data->circle_response=$circle_response;
+         $for_response_data->save();
         if($circle_data->save())
         {
            return response()->json(['status'=>'1','result'=>'Request send  successfully'], $this-> successStatus);
@@ -35,9 +45,15 @@ class CircleRequestController extends Controller
          
         }
       }
+     catch (\Exception $e) {
+      return $this->respondWithError(500,"Internal Server Error!",array());
+    }
+
+      }
     public function isaccept(Request $request)
 
     {
+  try{
       $user_id=$request->user_id;
       $admin_id=$request->admin_id;
       $is_accept=$request->is_accept;
@@ -78,6 +94,11 @@ class CircleRequestController extends Controller
 
        }
        }
+     }
+ catch (\Exception $e) {
+      return $this->respondWithError(500,"Internal Server Error!",array());
+    }
+
 
      }
 }
