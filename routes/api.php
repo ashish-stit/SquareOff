@@ -22,6 +22,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::post('login', 'API\UserController@login')->name('login');
 Route::post('signup', 'API\UserController@register')->name('signup');
 Route::post('userprofile', 'API\UserController@userprofile')->name('userprofile');
+Route::post('userdetails', 'API\UserController@userdetails')->name('userdetails');
 Route::post('/changepassword','ResetPasswordController@changepassword');
 Route::post('sendotp', 'API\UserController@sendotp')->name('sendotp');
 Route::post('forgetotp', 'ResetPasswordController@forgetotp')->name('forgetotp');
@@ -38,6 +39,9 @@ Route::post('/showcircle','TableTennisController@showcircle')->name('showcircle'
 Route::post('/redirect/facebook','API\UserController@facebook')->name('facebook');
 Route::post('/facebookprofl','API\UserController@facebookprofl')->name('facebookprofl');
 Route::post('/circlerequest','CircleRequestController@circlerequest')->name('circlerequest');
+Route::post('/circlerequestlist','CircleRequestController@circlerequestlist')->name('circlerequestlist');
+Route::post('/shownotification','CircleRequestController@shownotification')->name('shownotification');
+Route::post('/urlrequest','CircleRequestController@urlrequest')->name('urlrequest');
 Route::post('/isaccept','CircleRequestController@isaccept')->name('isaccept');
 Route::get('/challengecirclelist','ChallengeController@challengecirclelist')->name('challengecirclelist');
 Route::post('/challengeuserlist','ChallengeController@challengeuserlist')->name('challengeuserlist');
@@ -52,13 +56,10 @@ Route::post('/reject','NewGameController@reject')->name('reject');
 Route::post('/sendNotification','NewGameController@sendNotification')->name('sendNotification');
 Route::post('/turnamentuserlist','TurnamentController@turnamentuserlist')->name('turnamentuserlist');
 Route::get('/turnamentcirclelist','TurnamentController@turnamentcirclelist')->name('turnamentcirclelist');
-Route::post('/createturnament','TurnamentController@createturnament')->name('createturnament');
-
-
-
-
-
-
-
-
-
+Route::post('/sendInvothercircle','TurnamentController@sendInvothercircle')->name('sendInvothercircle');
+Route::post('/sendInvmycircle','TurnamentController@sendInvmycircle')->name('sendInvmycircle');
+Route::post('/mycirclelist','TurnamentController@mycirclelist')->name('mycirclelist');
+Route::post('/myuserlist','TurnamentController@myuserlist')->name('myuserlist');
+Route::post('/turnamentlist','TurnamentController@turnamentlist')->name('turnamentlist');
+Route::post('/turnamentrequest','TurnamentController@turnamentrequest')->name('turnamentrequest');
+Route::post('/turnamentaccept','TurnamentController@turnamentaccept')->name('turnamentaccept');

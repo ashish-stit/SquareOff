@@ -56,6 +56,7 @@ class ChallengeController extends Controller
       }
      }
   catch (\Exception $e) {
+echo $e->getmessage();
       return $this->respondWithError(500,"Internal Server Error!",array());
     }
 

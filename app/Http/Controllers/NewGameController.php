@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\User;
 use App\newgame;
 use DB;
+use App\notification;
 use Illuminate\Http\Request;
 
 class NewGameController extends Controller
@@ -17,9 +18,10 @@ public $successStatus = 200;
      {
        try
      {
-       $user_id=$request->user_id;
-       $list_data = DB::select('select id,name from users where id !='.$user_id);
-       return response()->json(['status'=>'1','data' => $list_data], $this-> successStatus); 
+       $circle_id=$request->circle_id;
+       $is_accept="1";
+       $list_data = DB::select('select id,user_id,user_name from joincircles where circle_id ='.$circle_id." and is_accept=".$is_accept);
+       return response()->json(['status'=>'1','result' => $list_data], $this-> successStatus); 
      }
      catch (\Exception $e) {
       return $this->respondWithError(500,"Internal Server Error!",array());
@@ -31,11 +33,20 @@ public $successStatus = 200;
      {
        $user_id=$request->user_id;
        $from_user_id=$request->from_user_id;
+       $message=$request->message;
+       $enum_type=$request->enum_type;
+       $enum=$request->enum;
        $game_data=new newgame();
        $game_data->user_id=$user_id;
        $game_data->from_user_id=$from_user_id;
+       $notification_data=new notification();
+       $notification_data->user_id=$from_user_id; 
+       $notification_data->enum=$enum;
+       $notification_data->enum_type=$enum_type;
+       $notification_data->message=$message;
        if($game_data->save())
        {
+       $notification_data->save();
        return response()->json(['status'=>'1','result'=>'Request send successfully','data' => $game_data], $this-> successStatus); 
       }
      }
@@ -49,6 +60,10 @@ public $successStatus = 200;
          $from_user_id=$request->from_user_id;
          $user_id=$request->user_id;
          $response=$request->response;
+         $message=$request->message;
+         $enum_type=$request->enum_type;
+         $enum=$request->enum;
+
          $rows =newgame::where('user_id',$user_id)->where('from_user_id',$from_user_id)->first();
          if($rows == "")
          {
@@ -62,8 +77,15 @@ public $successStatus = 200;
          $user_data=User::where('id',$user_id)->first();
           $user_data->total_point=$user_data->total_point+$points; 
           $rows->point=$points;
+          $notification_data=new notification();
+         $notification_data->user_id=$from_user_id; 
+        $notification_data->enum=$enum;
+        $notification_data->enum_type=$enum_type;
+        $notification_data->message=$message;
+
           if($rows->save())
            {
+              $notification_data->save();
              $user_data->save();
              return response()->json(['status'=>'1','result'=>'Request confirmed!'], $this-> successStatus);
            }
@@ -84,8 +106,10 @@ public $successStatus = 200;
     }
 
          }
-        public function sendNotification($fcm_token, $id="3")
+        public function sendNotification()
        {  
+        $fcm_token="cjK5UcnxQdu2wl_n2_WaPF:APA91bEq6Uc_CSTQbLBMgaUBh3mlSoM_zaJGJVm5_ZT5q0a0a980X5d7W2vcBwXVfYSQD0BZKPeCzsGxQSigKQL2VSlKo2-1YwykNEWfTE02WTUkKZhlP55g5fGmhG-A5KHQ5jTYimi3";
+         $id="3";
         $title="test1";
         $message="test";
         $push_notification_key ="AAAA9LIXzzs:APA91bGprOjFWZ9K1Mu_fPjuPimGR88Z1iuWCIx3ktgQo41JbAd7FaLiUH7fLUTcwHPWye-xrldpgWkapLYa36T3e7A2U-jY5Dl9cd2YJeZwNf4CWSXH0Ku5TXusSvb1DjqBHX5Pqb71";    
@@ -117,13 +141,9 @@ public $successStatus = 200;
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
         curl_setopt($ch, CURLOPT_POSTFIELDS, $postdata);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
-
-        // Get URL content
         $result = curl_exec($ch);    
-        // close handle to release resources
         curl_close($ch);
-
-        return $result;
+       return $result;
     }
 
 

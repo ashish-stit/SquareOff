@@ -3,11 +3,13 @@ namespace App\Http\Controllers\API;
 use Illuminate\Http\Request; 
 use App\Http\Controllers\Controller; 
 use App\User; 
+use App\TableTenniscreateCircle;
 use Illuminate\Support\Facades\Auth; 
 use App\Http\Requests\ResetValidation;
 use Validator;
 use File;
 use Twilio\Rest\Client;
+use DB;
 use Twilio\Jwt\ClientToken;
 use Illuminate\Support\Facades\Session;
 class UserController extends Controller 
@@ -266,6 +268,7 @@ public function verified(Request $request)
         $mobile_no='+91'.''.$request->mobile_no;
         $user_name=$request->username;
         $city=$request->city;
+        $fcm_token=$request->fcm_token;
         $sex=$request->sex;
         $country=$request->country;
         $state=$request->state;
@@ -280,8 +283,10 @@ public function verified(Request $request)
          $user->state=$state;
          $user->district=$district; 
          $user->city=$city;
+         $user->fcm_token=$fcm_token;
          $user->sex=$sex;
          $user->dob=$dob;
+         $user->media_path="http://ec2-3-15-216-225.us-east-2.compute.amazonaws.com/public/images/profile.jpg";
          if($user->save())
         {
            return response()->json(['result'=>'Register Successful','user_id'=>$user->id,'name'=>$user->name,'status'=>'1','token'=>$user->createToken('MyApp')-> accessToken], $this-> successStatus); 
@@ -324,7 +329,26 @@ catch (\Exception $e) {
     }
 
 }
-
-
+   public function userdetails(Request $request)
+     {
+       try
+     {
+       $user_id=$request->user_id;
+       $list_data = DB::select('select id,email,media_path,name,total_point from users where id ='.$user_id);
+       $circle_data=TableTenniscreateCircle::where('user_id',$user_id)->first();
+       if($circle_data)
+      {
+       return response()->json(['status'=>'1','id' => $list_data[0]->id,'total_points'=>$list_data[0]->total_point,'email'=>$list_data[0]->email,'media_path'=>$list_data[0]->media_path,'name'=>$list_data[0]->name,'circle_id'=>$circle_data->id], $this-> successStatus); 
+     }
+   else
+    {
+    return response()->json(['status'=>'1','id' => $list_data[0]->id,'total_points'=>$list_data[0]->total_point,'email'=>$list_data[0]->email,'media_path'=>$list_data[0]->media_path,'name'=>$list_data[0]->name,'circle_id'=>''], $this-> successStatus); 
+    }
+}
+     catch (\Exception $e) {
+echo $e->getmessage();
+      return $this->respondWithError(500,"Internal Server Error!",array());
+    }
+     }
 
 }
